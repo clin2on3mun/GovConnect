@@ -1,33 +1,44 @@
 import { NextFunction, Request, Response } from 'express';
-import { Agency } from '../models/agency';
+import Agency from '../models/agency';
 import AppError from '../util/appError';
-import catchAsync from '../catchAsync';
+import catchAsync from '../util/catchAsync';
 import Category from '../models/category';
+import handleValidation from '../util/handleValidation';
+import {
+  agencyValidationSchema,
+  updateAgencySchema,
+} from '../validators/validationSchema';
 
 new Category();
 export const createAgency = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const agency = await Agency.create(req.body);
+    const result = handleValidation(req.body, agencyValidationSchema);
+    if (!result.success) {
+      const errorMessages = result.error.errors
+        .map((err) => `${err.path}: ${err.message}`)
+        .join(', ');
+      return next(new AppError(errorMessages, 400));
+    }
+    const agency = await Agency.create(result.data);
     res.status(201).json({
       status: 'successful',
-      agency,
+      data: agency,
     });
   },
 );
 
 export const findAllAgencies = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const agencies = await Agency.find();
-    res.status(201).json({
+    const agencies = await Agency.find({ active: true });
+    res.status(200).json({
       status: 'successful',
-      agencies,
+      data: agencies,
     });
   },
 );
 
 export const findAgency = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.params.id);
     const agency = await Agency.findById(req.params.id).populate({
       path: 'categories',
     });
@@ -38,16 +49,21 @@ export const findAgency = catchAsync(
 
     res.status(200).json({
       status: 'success',
-      data: {
-        agency,
-      },
+      data: agency,
     });
   },
 );
 
 export const updateAgency = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const agency = await Agency.findByIdAndUpdate(req.params.id, req.body, {
+    const result = handleValidation(req.body, updateAgencySchema);
+    if (!result.success) {
+      const errorMessages = result.error.errors
+        .map((err) => `${err.path}: ${err.message}`)
+        .join(', ');
+      return next(new AppError(errorMessages, 400));
+    }
+    const agency = await Agency.findByIdAndUpdate(req.params.id, result.data, {
       new: true,
       runValidators: true,
     });
@@ -56,22 +72,45 @@ export const updateAgency = catchAsync(
     }
     res.status(200).json({
       status: 'success',
-      data: {
-        agency,
-      },
+      data: agency,
     });
   },
 );
 
 export const deleteAgency = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const agency = await Agency.findByIdAndDelete(req.params.id);
+    const agency = await Agency.findByIdAndUpdate(
+      req.params.id,
+      { active: false },
+      { new: true },
+    );
+
     if (!agency) {
       return next(new AppError('No Agency found with that ID', 404));
     }
+
     res.status(200).json({
       status: 'success',
-      data: null,
+      message: 'Agency soft-deleted successfully',
+    });
+  },
+);
+
+export const restoreAgency = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const agency = await Agency.findByIdAndUpdate(
+      req.params.id,
+      { active: true },
+      { new: true },
+    );
+
+    if (!agency) {
+      return next(new AppError('No Agency found with that ID', 404));
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: agency,
     });
   },
 );
