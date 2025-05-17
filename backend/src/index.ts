@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import connectDb from './config/db';
-import router from './routes/authRoutes';
+import router from './routes/userRoutes';
 import agencyRouter from './routes/agencyRoutes';
 import submissionRouter from './routes/submissionRoutes';
 import cookieParser from 'cookie-parser';
@@ -19,8 +19,8 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.use('/api/v1/users', router);
-app.use('/api/v1/agency', agencyRouter);
-app.use('/api/v1/submission', submissionRouter);
+app.use('/api/v1/agencies', agencyRouter);
+app.use('/api/v1/submissions', submissionRouter);
 app.listen(Port, () => {
   console.log(`App running .............${Port}`);
 });

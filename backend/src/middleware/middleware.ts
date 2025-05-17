@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import AppError from '../util/appError';
 import User from '../models/User';
 import { JwtPayload } from 'jsonwebtoken';
-import catchAsync from '../catchAsync';
+import catchAsync from '../util/catchAsync';
 
 export interface jwtWithUserId extends JwtPayload {
   userId: string;
@@ -12,7 +12,6 @@ export interface jwtWithUserId extends JwtPayload {
 export const protect = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const token = req.cookies.jwt;
-    console.log(token);
     if (!req.cookies || !req.cookies.jwt) {
       return next(
         new AppError('You are not logged in please login to get access', 401),
@@ -36,3 +35,14 @@ export const protect = catchAsync(
     next();
   },
 );
+
+export const restrictTo =
+  (...roles: string[]) =>
+  (req: Request, res: Response, next: NextFunction) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError('You do not have permission to perform this action', 403),
+      );
+    }
+    next();
+  };

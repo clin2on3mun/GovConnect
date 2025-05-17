@@ -7,7 +7,11 @@ export interface IfeedBack extends Document {
   categoryId: mongoose.Types.ObjectId;
   agencyId: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
-  response: mongoose.Types.ObjectId;
+  response: {
+    message: string;
+    respondedAt: Date;
+    respondedBy: mongoose.Types.ObjectId;
+  };
 }
 
 const submissionSchema = new Schema<IfeedBack>(
