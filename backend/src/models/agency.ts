@@ -1,6 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IAgency extends Document {
+  _id: string;
   name: string;
   email: string;
   phone: string;
@@ -9,6 +10,7 @@ export interface IAgency extends Document {
   logo: string;
   categories: mongoose.Types.ObjectId[];
   admin: mongoose.Types.ObjectId;
+  active: boolean;
 }
 
 const agencySchema = new Schema<IAgency>(
@@ -26,9 +28,14 @@ const agencySchema = new Schema<IAgency>(
         required: true,
       },
     ],
+    active: {
+      type: Boolean,
+      default: true,
+      select: false,
+    },
     admin: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   },
   { timestamps: true },
 );
 
-export const Agency = mongoose.model<IAgency>('Agency', agencySchema);
+export default mongoose.model<IAgency>('Agency', agencySchema);

@@ -6,7 +6,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string | undefined;
-  role: 'citizen' | 'admin' | 'agency_admin';
+  role: 'citizen' | 'admin' | 'agent_admin';
   phone?: string;
   agency?: mongoose.Types.ObjectId;
   correctPassword(
@@ -28,19 +28,33 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  phone: String,
   role: {
     type: String,
     required: true,
-    enum: ['admin', 'user', 'agent_admin'],
-    default: 'user',
+    enum: ['superadmin', 'guest', 'agent_admin'],
+    default: 'guest',
   },
   agency: {
     type: Schema.Types.ObjectId,
     ref: 'Agency',
     required: function (this: IUser) {
-      return this.role === 'agency_admin';
+      return this.role === 'agent_admin';
     },
   },
+});
+
+userSchema.pre('save', async function (next) {
+  if (this.isModified('role') && this.role === 'superadmin') {
+    const existing = await mongoose.models.User.findOne({ role: 'superadmin' });
+
+    if (existing && existing._id.toString() !== this._id.toString()) {
+      const err = new Error('There can only be one superadmin');
+      return next(err);
+    }
+  }
+
+  next();
 });
 
 userSchema.pre('save', async function (next) {
