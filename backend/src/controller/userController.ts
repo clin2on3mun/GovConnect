@@ -47,7 +47,7 @@ export const signup = catchAsync(
         message: 'email already taken',
       });
     } else {
-      const user = await userService.signUp(req.body);
+      const user = await userService.signUp(result.data);
 
       createSendToken(user, 201, res);
     }
@@ -60,8 +60,6 @@ export const login = catchAsync(
     if (!result.success) {
       return next(new AppError(result.error.errors[0].message, 400));
     }
-
-    console.log(result);
     const { email, password } = result.data;
     if (!email || !password) {
       return next(new AppError('Please enter email or password', 400));
@@ -99,5 +97,16 @@ export const getAllUsers = catchAsync(
       status: 'successful',
       data: users,
     });
+  },
+);
+
+export const getUser = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.user);
+    if (!req.user) {
+      return res.status(401).json({ message: 'Not authenticated' });
+    }
+
+    res.status(200).json({ user: req.user });
   },
 );

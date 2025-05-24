@@ -1,3 +1,4 @@
+import { MongooseQueryOptions } from 'mongoose';
 import { IfeedBack, Submission } from '../models/submission';
 
 class SubmissionService {
@@ -10,10 +11,14 @@ class SubmissionService {
     return await Submission.deleteOne();
   }
   async findUserorAgentSubmissions(name: string, currentUserId: string) {
-    return await Submission.find({ [name]: currentUserId });
+    return await Submission.find({ [name]: currentUserId }).populate('userId');
   }
-  async findUpdateSubmission(id: string, update: Partial<IfeedBack>) {
-    return await Submission.findByIdAndUpdate(id, update);
+  async findUpdateSubmission(
+    id: string,
+    update: Partial<IfeedBack>,
+    option?: MongooseQueryOptions,
+  ) {
+    return await Submission.findByIdAndUpdate(id, update, option);
   }
 }
 

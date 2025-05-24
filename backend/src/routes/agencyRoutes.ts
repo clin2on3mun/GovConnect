@@ -11,9 +11,8 @@ import { protect, restrictTo } from '../middleware/middleware';
 import { findSubmission } from '../controller/submissionController';
 
 const router = Router();
-router.use(protect);
-
 router.get('/', findAllAgencies);
+router.use(protect);
 router.post('/', restrictTo('superadmin'), createAgency);
 router.route('/:id').get(findAgency).patch(updateAgency);
 router.patch('/:id', restrictTo('superadmin'), updateAgency);

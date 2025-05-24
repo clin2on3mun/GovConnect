@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { login, logOut, signup } from '../controller/userController';
+import { getUser, login, logOut, signup } from '../controller/userController';
 import { protect } from '../middleware/middleware';
 import { findSubmission } from '../controller/submissionController';
 
@@ -9,5 +9,6 @@ router.post('/signup', signup);
 router.post('/login', login);
 router.get('/:user/submissions', protect, findSubmission);
 router.post('/logout', logOut);
+router.get('/me', protect, getUser);
 
 export default router;

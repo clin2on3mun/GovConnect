@@ -3,7 +3,6 @@ import Agency from '../models/agency';
 import AppError from '../util/appError';
 import catchAsync from '../util/catchAsync';
 import Category from '../models/category';
-import handleValidation from '../util/handleValidation';
 import {
   agencyValidationSchema,
   updateAgencySchema,
@@ -12,7 +11,7 @@ import {
 new Category();
 export const createAgency = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = handleValidation(req.body, agencyValidationSchema);
+    const result = agencyValidationSchema.safeParse(req.body);
     if (!result.success) {
       const errorMessages = result.error.errors
         .map((err) => `${err.path}: ${err.message}`)
@@ -56,7 +55,7 @@ export const findAgency = catchAsync(
 
 export const updateAgency = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = handleValidation(req.body, updateAgencySchema);
+    const result = updateAgencySchema.safeParse(req.body);
     if (!result.success) {
       const errorMessages = result.error.errors
         .map((err) => `${err.path}: ${err.message}`)

@@ -3,7 +3,7 @@ import mongoose, { Schema } from 'mongoose';
 export interface IfeedBack extends Document {
   title: string;
   description: string;
-  status: string;
+  status: 'unread' | 'read' | 'answered';
   categoryId: mongoose.Types.ObjectId;
   agencyId: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
@@ -35,8 +35,8 @@ const submissionSchema = new Schema<IfeedBack>(
     },
     status: {
       type: String,
-      enum: ['pending', 'in-progress', 'resolved'],
-      default: 'pending',
+      enum: ['unread', 'read', 'answered'],
+      default: 'unread',
     },
     response: {
       message: { type: String },

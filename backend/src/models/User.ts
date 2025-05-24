@@ -6,7 +6,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string | undefined;
-  role: 'citizen' | 'admin' | 'agent_admin';
+  role: 'guest' | 'agent_admin' | 'superadmin';
   phone?: string;
   agency?: mongoose.Types.ObjectId;
   correctPassword(

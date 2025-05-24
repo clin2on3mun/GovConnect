@@ -9,7 +9,6 @@ import {
   submissionUpdateValidationSchema,
   submissionValidationSchema,
 } from '../validators/validationSchema';
-import handleValidation from '../util/handleValidation';
 
 const submissionService = new SubmissionService();
 export const createSubmission = catchAsync(
@@ -18,7 +17,8 @@ export const createSubmission = catchAsync(
     if (!userId) {
       return next(new AppError('User not authenticated', 401));
     }
-    const result = handleValidation(req.body, submissionValidationSchema);
+    const result = submissionValidationSchema.safeParse(req.body);
+
     if (!result.success) {
       const errorMessages = result.error.errors
         .map((err) => `${err.path}: ${err.message}`)
@@ -40,9 +40,10 @@ export const createSubmission = catchAsync(
 export const findSubmission = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const currentUserId = req.user._id;
+    const FromUseragencyId = req.user.agency;
     const requestedUserId = req.params.user;
 
-    if (!currentUserId) {
+    if (!currentUserId || !FromUseragencyId) {
       return next(new AppError('User not authenticated', 401));
     }
 
@@ -80,14 +81,18 @@ export const findSubmission = catchAsync(
 
 export const findAllSubmission = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    if (req.user.role !== 'superadmin') {
+    const role = req.user.role;
+
+    if (role !== 'superadmin') {
       return next(
         new AppError('Only superadmin can access all submissions', 403),
       );
     }
+
     const submissions = await Submission.find().populate(
       'userId agencyId categoryId',
     );
+    console.log(submissions, 'submissions');
     res.status(200).json({
       status: 'success',
       results: submissions.length,
@@ -179,7 +184,7 @@ export const respondToSubmission = async (
     respondedAt: new Date(),
     respondedBy: userId,
   };
-  submission.status = 'resolved';
+  submission.status = 'answered';
   await submission.save();
   res.status(200).json({
     status: 'success',
@@ -217,6 +222,25 @@ export const updateSubmission = catchAsync(
     res.status(200).json({
       status: 'success',
       data: updateSubmission,
+    });
+  },
+);
+
+export const viewedbyAgent = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const statusUpdate = await submissionService.findUpdateSubmission(
+      req.params.id,
+      { status: 'read' },
+      {
+        runValidators: true,
+      },
+    );
+    if (!statusUpdate) {
+      return next(new AppError('No submission found with that ID', 404));
+    }
+    res.status(200).json({
+      status: 'success',
+      data: statusUpdate,
     });
   },
 );

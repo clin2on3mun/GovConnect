@@ -7,6 +7,7 @@ import {
   getSubmission,
   respondToSubmission,
   updateSubmission,
+  viewedbyAgent,
 } from '../controller/submissionController';
 
 const router = Router();
@@ -19,5 +20,6 @@ router.delete('/:id', restrictTo('guest', 'superadmin'), deleteSubmission);
 router.get('/', restrictTo('superadmin'), findAllSubmission);
 router.patch('/:id/respond', restrictTo('agent_admin'), respondToSubmission);
 router.patch('/:id', restrictTo('guest'), updateSubmission);
+router.patch('/:id/read', restrictTo('agent_admin'), viewedbyAgent);
 
 export default router;
