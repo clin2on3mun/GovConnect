@@ -11,7 +11,9 @@ class SubmissionService {
     return await Submission.deleteOne();
   }
   async findUserorAgentSubmissions(name: string, currentUserId: string) {
-    return await Submission.find({ [name]: currentUserId }).populate('userId');
+    return await Submission.find({ [name]: currentUserId }).populate(
+      'userId agencyId',
+    );
   }
   async findUpdateSubmission(
     id: string,

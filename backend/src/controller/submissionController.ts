@@ -39,11 +39,11 @@ export const createSubmission = catchAsync(
 
 export const findSubmission = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const currentUserId = req.user._id;
-    const FromUseragencyId = req.user.agency;
+    const currentUserId = req.user._id.toString();
+
     const requestedUserId = req.params.user;
 
-    if (!currentUserId || !FromUseragencyId) {
+    if (!currentUserId) {
       return next(new AppError('User not authenticated', 401));
     }
 
@@ -92,7 +92,6 @@ export const findAllSubmission = catchAsync(
     const submissions = await Submission.find().populate(
       'userId agencyId categoryId',
     );
-    console.log(submissions, 'submissions');
     res.status(200).json({
       status: 'success',
       results: submissions.length,
@@ -159,7 +158,7 @@ export const respondToSubmission = async (
       .join(', ');
     return next(new AppError(errorMessages, 400));
   }
-  console.log(result.error);
+
   const { message } = result.data;
   if (!message) {
     return next(new AppError('Response message is required', 400));
@@ -215,7 +214,6 @@ export const updateSubmission = catchAsync(
       req.params.id,
       result.data as Partial<IfeedBack>,
     );
-    console.log(updateSubmission);
     if (!updateSubmission) {
       return next(new AppError('No submission found with that ID', 404));
     }

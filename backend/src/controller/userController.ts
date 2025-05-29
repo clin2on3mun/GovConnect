@@ -9,7 +9,7 @@ import { loginSchema, signupSchema } from '../validators/validationSchema';
 const userService = new UserService();
 
 const createSendToken = (user: IUser, statusCode: number, res: Response) => {
-  const token = signToken(user._id);
+  const token = signToken(user._id.toString());
   const cookieOptions = {
     expires: new Date(
       Date.now() +
@@ -102,7 +102,6 @@ export const getAllUsers = catchAsync(
 
 export const getUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.user);
     if (!req.user) {
       return res.status(401).json({ message: 'Not authenticated' });
     }
