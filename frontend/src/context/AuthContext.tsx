@@ -3,9 +3,10 @@ import axios from "axios";
 import { AuthContext } from "../hooks/AuthHooks";
 
 type User = {
-  id: string;
+  _id: string;
   email: string;
   role: string;
+  name: string;
 };
 
 export type AuthContextType = {
@@ -18,7 +19,7 @@ export type AuthContextType = {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true); // 👈 new
+  const [isLoading, setIsLoading] = useState(true);
   const isAuthenticated = !!user;
 
   const checkAuth = async () => {
@@ -26,6 +27,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/users/me`, {
         withCredentials: true,
       });
+      console.log(res.data.user);
       setUser(res.data.user);
     } catch (err) {
       setUser(null);
@@ -37,8 +39,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     checkAuth();
   }, []);
-  console.log(isLoading, "in context");
-
   return (
     <AuthContext.Provider
       value={{ user, isAuthenticated, setUser, checkAuth, isLoading }}

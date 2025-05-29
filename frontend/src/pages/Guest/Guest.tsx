@@ -2,7 +2,6 @@ import axios from "axios";
 import { useAuth } from "../../hooks/AuthHooks";
 import { useEffect, useState } from "react";
 import Submission from "../../components/Submission";
-import { ClipLoader } from "react-spinners";
 
 type SubmissionTypes = {
   _id: string;
@@ -10,23 +9,23 @@ type SubmissionTypes = {
   content: string;
   status: string;
   createdAt: string;
-  user: {
+  userId: {
     name: string;
   };
 };
 
 export default function Guest() {
-  const { user, isLoading } = useAuth();
+  const { user } = useAuth();
   const [submissions, setSubmissions] = useState<SubmissionTypes[]>([]);
-  const [loadingSubmissions, setLoadingSubmissions] = useState(true);
-  console.log(isLoading);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchSubmissions = async () => {
-      if (!user?.id) return;
+      if (!user?._id) return;
 
       try {
+        setLoading(true);
         const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/${user.id}/submissions`,
+          `${import.meta.env.VITE_API_URL}/users/${user._id}/submissions`,
           { withCredentials: true }
         );
 
@@ -34,22 +33,21 @@ export default function Guest() {
       } catch (err) {
         console.error("Failed to fetch user submissions", err);
       } finally {
-        setLoadingSubmissions(false);
+        setLoading(false);
       }
     };
 
-    if (!isLoading && user) {
+    if (user) {
       fetchSubmissions();
     }
-  }, [isLoading, user]);
+  }, [user]);
 
-  if (isLoading || loadingSubmissions) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <ClipLoader color="#3b82f6" size={50} />
-      </div>
-    );
-  }
-
-  return <Submission submissions={submissions} title="Submissions you sent" />;
+  console.log(submissions);
+  return (
+    <Submission
+      submissions={submissions}
+      loading={loading}
+      title="Submissions you sent"
+    />
+  );
 }

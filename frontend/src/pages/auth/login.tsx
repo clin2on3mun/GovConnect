@@ -7,6 +7,7 @@ import {
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/AuthHooks";
 
 export default function Login() {
   const {
@@ -20,14 +21,18 @@ export default function Login() {
       password: "",
     },
   });
+  const { checkAuth } = useAuth();
   const navigate = useNavigate();
 
   const onSubmit = async (data: LoginFormInputs) => {
     try {
-      console.log(import.meta.env.VITE_API_URL);
       await axios.post(`${import.meta.env.VITE_API_URL}/users/login`, data, {
         withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
+      await checkAuth();
       navigate("/dashboard");
     } catch (err: any) {
       if (axios.isAxiosError(err)) {
