@@ -1,33 +1,22 @@
 import { formatDistanceToNow } from "date-fns";
 import { ClipLoader } from "react-spinners";
+import type { SubmissionTypes } from "../pages/Guest/Submissions";
+import { Link } from "react-router-dom";
 
-type SubmissionTypes = {
-  _id: string;
-  title: string;
-  content: string;
-  status: string;
-  createdAt: string;
-  userId: {
-    name: string;
-  };
-  agencyId: {
-    name: string;
-  };
-};
+
 
 type SubmissionProps = {
   submissions?: SubmissionTypes[];
   title?: string;
-  onClickSubmission?: (submission: SubmissionTypes) => void;
   loading: boolean;
 };
 
 export default function Submission({
   submissions,
   title = "Submissions",
-  onClickSubmission,
   loading,
 }: SubmissionProps) {
+
   return (
     <section className="py-8 max-w-7xl mx-auto flex flex-col gap-5">
       <h2 className="text-3xl">{title}</h2>
@@ -39,9 +28,8 @@ export default function Submission({
         <ul className="space-y-4">
           {Array.isArray(submissions) && submissions?.length !== 0 ? (
             submissions?.map((submission) => (
-              <li
+              <Link to={`/submission/${submission._id}`}
                 key={submission._id}
-                onClick={() => onClickSubmission?.(submission)}
                 className="flex flex-col gap-3 rounded-lg max-w-5xl py-2 px-4 shadow-md transition-all duration-200 hover:shadow-lg hover:bg-gray-50 hover:rounded-lg cursor-pointer"
               >
                 <div className="flex justify-between">
@@ -64,7 +52,7 @@ export default function Submission({
                     })}
                   </span>
                 </p>
-              </li>
+              </Link>
             ))
           ) : (
             <p className="text-gray-500">No submissions found.</p>

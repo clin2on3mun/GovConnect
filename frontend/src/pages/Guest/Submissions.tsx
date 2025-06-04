@@ -3,7 +3,7 @@ import { useAuth } from "../../hooks/AuthHooks";
 import { useEffect, useState } from "react";
 import Submission from "../../components/Submission";
 
-type SubmissionTypes = {
+export type SubmissionTypes = {
   _id: string;
   title: string;
   content: string;
@@ -12,9 +12,12 @@ type SubmissionTypes = {
   userId: {
     name: string;
   };
+  agencyId:{
+    name:string
+  }
 };
 
-export default function Guest() {
+export default function Submissions() {
   const { user } = useAuth();
   const [submissions, setSubmissions] = useState<SubmissionTypes[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,7 +45,7 @@ export default function Guest() {
     }
   }, [user]);
 
-  console.log(submissions);
+  console.log(user,"submission");
   return (
     <Submission
       submissions={submissions}

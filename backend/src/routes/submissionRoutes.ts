@@ -14,7 +14,7 @@ const router = Router();
 
 router.use(protect);
 router.route('/').post(createSubmission);
-router.get('/:id', getSubmission);
+router.get('/:id', restrictTo('guest', 'superadmin') ,getSubmission);
 
 router.delete('/:id', restrictTo('guest', 'superadmin'), deleteSubmission);
 router.get('/', restrictTo('superadmin'), findAllSubmission);
