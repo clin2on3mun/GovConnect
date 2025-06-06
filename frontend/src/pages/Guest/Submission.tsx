@@ -26,9 +26,23 @@ export default function Submission(){
             }
 
         }
-         if (user && paramId.id) {
-      fetchSubmission();
-    }
+        const AgencyViewSubmission = async()=>{
+            try{
+               const res = await axios.patch(`${import.meta.env.VITE_API_URL}/submissions/${paramId.id}/read`,{status:'read'},{
+                withCredentials:true
+               })
+               setSubmission(res.data.data)
+            }catch(err){
+              console.error("Failed to fetch user submissions", err)
+            }
+        }
+         if (user?.role==="guest" && paramId.id) {
+          fetchSubmission();
+        }
+        else{
+            AgencyViewSubmission()
+        }
+
     },[user, paramId.id])
 
     if(!submission){
@@ -38,10 +52,20 @@ export default function Submission(){
         </div>
         )
     }
-    console.log(submission)
     return (
-        <>
-         <p>{submission.title}</p>
-        </>
+        <section className="mt-8  bg-gray-50 rounded-md p-4 border mx-auto ">
+         <div className="flex justify-between">
+            <div className="grid gap-3">
+                <h2><span>subject:</span> {submission.title[0].toUpperCase()+submission.title.slice(1)}</h2>
+                <p><span>To:</span> {submission.agencyId.name}</p>
+                <p><span>category:</span> {submission.categoryId.name}</p>
+            </div>  
+            <span className={`text-sm font-medium capitalize ${submission.status ==="unread" ? 'text-yellow-600': submission.status ==='read'?'text-blue-500': submission.status==="answered"? 'text-green-500':null}`}>
+                    {submission.status}
+            </span> 
+        </div>    
+         <hr className="my-5 border-gray-500"/>
+         <p className="mt-1">{submission.description}</p>
+        </section>
     )
 }

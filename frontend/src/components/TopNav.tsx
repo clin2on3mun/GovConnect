@@ -24,6 +24,7 @@ export default function TopNav() {
   };
   const navs = [
     {
+   
       path: "/dashboard",
       name: "Dashboard",
     },
@@ -50,8 +51,8 @@ export default function TopNav() {
         <nav>
           <ul className="flex">
             {navs.map((el, index) => (
-              <>
-                <li className="" key={index}>
+            
+                <li className={`${index}`} key={index+1}>
                   <NavLink
                     to={el.path}
                     className={`inline-block py-1 px-4 text-lg`}
@@ -59,7 +60,6 @@ export default function TopNav() {
                     {el.name}
                   </NavLink>
                 </li>
-              </>
             ))}
           </ul>
         </nav>
@@ -70,7 +70,7 @@ export default function TopNav() {
 
 const PopUp = ({state,user, handleLogout}:{state:boolean,user:string|undefined, handleLogout:()=>void}) =>{
   return (
-    <ul className={`${state? 'opacity-[1] z-10 top-11 transition-[opacity] ease-in-out ':'opacity-0'} absolute  left-[20%] sm:left-[50%] md:left-[63%] lg:left-[72%] xl:left-[76%]  bg-white shadow-md rounded-md`}>
+    <ul className={`${state? 'opacity-[1] z-10 top-11 transition-[opacity] ease-in-out ':'opacity-0'} absolute  left-[20%] sm:left-[50%] min-[480px]:left-[35%] max-[] md:left-[63%] lg:left-[72%] xl:left-[76%]  bg-white shadow-md rounded-md`}>
       <li className="px-4 py-2 text-sm">{user}</li>
       <li className="group">
         <button className="flex items-center w-full group-hover:bg-black hover:rounded-md px-4 py-2 gap-4"  onClick={handleLogout}>

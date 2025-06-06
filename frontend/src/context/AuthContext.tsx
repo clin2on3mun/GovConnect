@@ -7,6 +7,9 @@ type User = {
   email: string;
   role: string;
   name: string;
+  agency:{
+    _id:string
+  }
 };
 
 export type AuthContextType = {
@@ -27,7 +30,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/users/me`, {
         withCredentials: true,
       });
-      console.log(res.data.user);
       setUser(res.data.user);
     } catch (err) {
       setUser(null);

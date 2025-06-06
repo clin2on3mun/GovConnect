@@ -1,37 +1,24 @@
-import axios from "axios";
-import { useAuth } from "../../hooks/AuthHooks";
 import { useEffect, useState } from "react";
+import { useAuth } from "../../hooks/AuthHooks";
+import type { SubmissionTypes } from "./Submissions";
+import axios from "axios";
 import Submission from "../../components/Submission";
 
-export type SubmissionTypes = {
-  _id: string;
-  title: string;
-  description: string;
-  status: string;
-  createdAt: string;
-  categoryId:{
-    name:string
-  }
-  userId: {
-    name: string;
-  };
-  agencyId:{
-    name:string
-  }
-};
 
-export default function Submissions() {
-  const { user } = useAuth();
+
+
+export default function AgentSubmission(){
+    const { user } = useAuth();
   const [submissions, setSubmissions] = useState<SubmissionTypes[]>([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchSubmissions = async () => {
-      if (!user?._id) return;
+      if (!user?.agency) return;
 
       try {
         setLoading(true);
         const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/users/${user._id}/submissions`,
+          `${import.meta.env.VITE_API_URL}/agencies/${user.agency}/submissions`,
           { withCredentials: true }
         );
 
@@ -47,12 +34,12 @@ export default function Submissions() {
       fetchSubmissions();
     }
   }, [user]);
-
+  
   return (
     <Submission
       submissions={submissions}
       loading={loading}
-      title="Sent Submissions"
+      title="Submissions"
     />
   );
 }
