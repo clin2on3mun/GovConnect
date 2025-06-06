@@ -56,7 +56,7 @@ export const submissionValidationSchema = z.object({
   agencyId: ObjectId('Invalid agent_admin'),
   userId: ObjectId('Invalid guest'),
   categoryId: ObjectId('Invalid category'),
-  status: z.enum(['pending', 'in-progress', 'resolved']).optional(),
+  status: z.enum(['unread', 'read', 'answered']).optional(),
   response: responseSchema.optional(),
 });
 
@@ -66,6 +66,6 @@ export const submissionUpdateValidationSchema = z.object({
   agencyId: ObjectId('Invalid agent_admin').optional(),
   userId: ObjectId('Invalid guest').optional(),
   categoryId: ObjectId('Invalid category').optional(),
-  status: z.enum(['pending', 'in-progress', 'resolved']).optional(),
+  status: z.enum(['unread', 'read', 'answered']).optional(),
   response: responseSchema.optional(),
 });

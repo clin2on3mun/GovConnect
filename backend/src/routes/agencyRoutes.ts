@@ -8,7 +8,7 @@ import {
   updateAgency,
 } from '../controller/agencyController';
 import { protect, restrictTo } from '../middleware/middleware';
-import { findSubmission } from '../controller/submissionController';
+import { findAgentSubmission } from '../controller/submissionController';
 
 const router = Router();
 router.get('/', findAllAgencies);
@@ -18,5 +18,5 @@ router.route('/:id').get(findAgency).patch(updateAgency);
 router.patch('/:id', restrictTo('superadmin'), updateAgency);
 router.patch('/:id/deleteAgency', restrictTo('superadmin'), deleteAgency);
 router.patch('/:id/restoreAgency', restrictTo('superadmin'), restoreAgency);
-router.get('/:agencyId/submissions', protect, findSubmission);
+router.get('/:agencyId/submissions', protect, findAgentSubmission);
 export default router;

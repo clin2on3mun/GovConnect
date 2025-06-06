@@ -37,12 +37,11 @@ export const createSubmission = catchAsync(
   },
 );
 
-export const findSubmission = catchAsync(
+export const findUserSubmission = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const currentUserId = req.user._id.toString();
-
     const requestedUserId = req.params.user;
-
+    
     if (!currentUserId) {
       return next(new AppError('User not authenticated', 401));
     }
@@ -57,8 +56,18 @@ export const findSubmission = catchAsync(
         data: submission,
       });
     }
-    const agency = await Agency.findById(req.params.agencyId);
+  
 
+    return next(
+      new AppError('You are not authorized to view these submissions', 403),
+    );
+  },
+);
+
+export const findAgentSubmission = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const currentUserId = req.user._id.toString();
+    const agency = await Agency.findById(req.params.agencyId);
     if (!agency) {
       return next(new AppError('No agency found with this ID', 404));
     }
@@ -132,7 +141,7 @@ export const deleteSubmission = catchAsync(
 
 export const getSubmission = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const submission = await submissionService.findById(req.params.id);
+    const submission = await submissionService.findById(req.params.id, 'agencyId categoryId');
     if (!submission) {
       return next(new AppError('No submission found with that ID', 404));
     }
@@ -164,7 +173,7 @@ export const respondToSubmission = async (
     return next(new AppError('Response message is required', 400));
   }
 
-  const submission = await submissionService.findById(submissionId, 'agencyId');
+  const submission = await submissionService.findById(submissionId,'agencyId');
 
   if (!submission) {
     return next(new AppError('No submission found with that ID', 404));
@@ -226,9 +235,10 @@ export const updateSubmission = catchAsync(
 
 export const viewedbyAgent = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
+  
     const statusUpdate = await submissionService.findUpdateSubmission(
       req.params.id,
-      { status: 'read' },
+      { status: req.body.status },
       {
         runValidators: true,
       },

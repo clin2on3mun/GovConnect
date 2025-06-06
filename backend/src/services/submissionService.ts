@@ -4,13 +4,14 @@ import { IfeedBack, Submission } from '../models/submission';
 class SubmissionService {
   async findById(id: string, popOption?: string) {
     const query = await Submission.findById(id);
-    if (popOption) query?.populate(popOption);
+    if (popOption) await query?.populate(popOption);
     return query;
   }
   async deleteSubmission() {
     return await Submission.deleteOne();
   }
   async findUserorAgentSubmissions(name: string, currentUserId: string) {
+    console.log(name)
     return await Submission.find({ [name]: currentUserId }).populate(
       'userId agencyId',
     );
