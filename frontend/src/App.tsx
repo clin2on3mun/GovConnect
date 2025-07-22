@@ -8,7 +8,6 @@ import Submission from "./pages/Guest/Submission";
 import AllSubmission from "./pages/Guest/AllSubmission";
 
 function App() {
-  console.log(Routes);
   return (
     <>
       <Routes>
