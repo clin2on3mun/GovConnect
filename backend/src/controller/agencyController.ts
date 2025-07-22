@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import Agency from '../models/agency';
+import Agency from '../models/Agency';
 import AppError from '../util/appError';
 import catchAsync from '../util/catchAsync';
-import Category from '../models/category';
+import Category from '../models/Category';
 import {
   agencyValidationSchema,
   updateAgencySchema,

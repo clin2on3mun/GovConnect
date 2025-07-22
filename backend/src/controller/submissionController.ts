@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import catchAsync from '../util/catchAsync';
-import { IfeedBack, Submission } from '../models/submission';
+import { IfeedBack, Submission } from '../models/Submission';
 import AppError from '../util/appError';
-import Agency from '../models/agency';
+import Agency from '../models/Agency';
 import SubmissionService from '../services/submissionService';
 import {
   responseSchema,

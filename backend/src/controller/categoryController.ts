@@ -1,4 +1,4 @@
-import category from '../models/category';
+import category from '../models/Category';
 import AppError from '../util/appError';
 import catchAsync from '../util/catchAsync';
 import { Request, Response, NextFunction } from 'express';
