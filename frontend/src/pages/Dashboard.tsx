@@ -1,9 +1,11 @@
 import { ClipLoader } from "react-spinners";
 import { useAuth } from "../hooks/AuthHooks";
 
+
 const Dashboard = () => {
   const { user, isLoading } = useAuth();
 
+ 
   if (isLoading) {
     return (
       <div className="flex justify-center items-center">
