@@ -6,7 +6,7 @@ import {
   guestSignupSchema,
   type GuestSignupInputs,
 } from "../../validations/validationSchema";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 type Agency = {
   _id: string;
@@ -180,7 +180,9 @@ export default function Signup() {
         >
           {isSubmitting ? "Signing up..." : "Signup"}
         </button>
+        <p className="mt-4">Already have an Account <NavLink to="/login" className="text-blue-500">login</NavLink></p>
       </form>
+      
     </div>
   );
 }
