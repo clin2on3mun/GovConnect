@@ -1,5 +1,5 @@
 import { MongooseQueryOptions } from 'mongoose';
-import { IfeedBack, Submission } from '../models/submission';
+import { IfeedBack, Submission } from '../models/Submission';
 
 class SubmissionService {
   async findById(id: string, popOption?: string) {
@@ -11,7 +11,6 @@ class SubmissionService {
     return await Submission.deleteOne();
   }
   async findUserorAgentSubmissions(name: string, currentUserId: string) {
-    console.log(name)
     return await Submission.find({ [name]: currentUserId }).populate(
       'userId agencyId',
     );
